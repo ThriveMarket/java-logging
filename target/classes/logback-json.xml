@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Disable default logback config -->
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+    
+    <!-- Console JSON appender for all logs -->
+    <appender name="jsonConsole" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <!-- Standard fields -->
+            <includeMdcKeyName>traceId</includeMdcKeyName>
+            <includeMdcKeyName>spanId</includeMdcKeyName>
+            <includeMdcKeyName>requestId</includeMdcKeyName>
+            <includeMdcKeyName>sessionId</includeMdcKeyName>
+            <includeMdcKeyName>clientIp</includeMdcKeyName>
+            <includeMdcKeyName>path</includeMdcKeyName>
+            <includeMdcKeyName>method</includeMdcKeyName>
+            <includeMdcKeyName>status</includeMdcKeyName>
+            <includeMdcKeyName>durationMs</includeMdcKeyName>
+            
+            <!-- Context specific fields for application data -->
+            <includeMdcKeyName>context.*</includeMdcKeyName>
+            
+            <!-- Service metadata fields -->
+            <includeMdcKeyName>service.*</includeMdcKeyName>
+            <includeMdcKeyName>version</includeMdcKeyName>
+            <includeMdcKeyName>event</includeMdcKeyName>
+            
+            <!-- Error details -->
+            <includeMdcKeyName>error.*</includeMdcKeyName>
+            
+            <!-- ISO8601 timestamp with microseconds -->
+            <timestampPattern>yyyy-MM-dd'T'HH:mm:ss.SSSZZ</timestampPattern>
+            
+            <!-- Default service name from Spring application properties -->
+            <customFields>{\"service\":{\"name\":\"${spring.application.name:-unknown}\",\"version\":\"${spring.application.version:-0.0.1}\"}}</customFields>
+            
+            <!-- Include all other MDC values -->
+            <includeMdcKeyName>*</includeMdcKeyName>
+        </encoder>
+    </appender>
+    
+    <!-- For Docker logging compatibility, all logs go to standard appender -->
+    <logger name="org.springframework" level="INFO" />
+    <logger name="org.springframework.web" level="INFO" />
+    <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="OFF" />
+    <logger name="com.thrivemarket.logging.config.RequestLoggingInterceptor" level="INFO" />
+    <logger name="com.thrivemarket" level="DEBUG" />
+    
+    <!-- Explicitly disable Spring Boot default logging -->
+    <logger name="org.springframework.boot.StartupInfoLogger" level="OFF" />
+    
+    <root level="INFO">
+        <appender-ref ref="jsonConsole" />
+    </root>
+</configuration>

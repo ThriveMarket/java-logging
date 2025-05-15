@@ -1,0 +1,209 @@
+# Thrive Market Java Logging Library
+
+A standardized structured logging library for Java applications that provides consistent, JSON-formatted logs suitable for modern observability platforms.
+
+## Features
+
+- Structured JSON logging with standardized fields
+- Request/response logging for web applications
+- Customizable context data for richer log entries
+- Exception logging with stack traces
+- Service/version metadata automatically included
+- Spring Boot auto-configuration for seamless integration
+- Compatible with OpenTelemetry for distributed tracing
+
+## Installation
+
+### Maven
+
+Add the following dependency to your `pom.xml`:
+
+```xml
+<dependency>
+    <groupId>com.thrivemarket</groupId>
+    <artifactId>java-logging</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
+### GitHub Packages Configuration
+
+To use this library from GitHub Packages, add the following to your `~/.m2/settings.xml`:
+
+```xml
+<settings>
+  <servers>
+    <server>
+      <id>github</id>
+      <username>${github.user}</username>
+      <password>${github.token}</password>
+    </server>
+  </servers>
+</settings>
+```
+
+And add the repository to your `pom.xml`:
+
+```xml
+<repositories>
+    <repository>
+        <id>github</id>
+        <url>https://maven.pkg.github.com/thrivemarket/java-logging</url>
+    </repository>
+</repositories>
+```
+
+## Usage
+
+### Basic Setup
+
+The library uses Spring Boot auto-configuration to set up logging automatically. Simply add the dependency to your project and it will be enabled by default.
+
+### Configuration Properties
+
+Add the following to your `application.yml` to customize behavior:
+
+```yaml
+thrivemarket:
+  logging:
+    request:
+      enabled: true      # Enable/disable request logging interceptor
+      detailed: false    # Enable/disable detailed request content logging
+```
+
+### Logback Configuration
+
+Create a `logback-spring.xml` file in your resources directory and include the pre-configured JSON logging template:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="logback-json.xml"/>
+    
+    <!-- Your additional appenders or configuration here -->
+</configuration>
+```
+
+### Using LoggingUtils
+
+```java
+import com.thrivemarket.logging.config.LoggingUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.HashMap;
+import java.util.Map;
+
+@Service
+public class UserService {
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
+    private final LoggingUtils loggingUtils;
+    
+    @Autowired
+    public UserService(LoggingUtils loggingUtils) {
+        this.loggingUtils = loggingUtils;
+    }
+    
+    public void registerUser(User user) {
+        Map<String, Object> context = new HashMap<>();
+        context.put("user_id", user.getId());
+        context.put("email", user.getEmail());
+        
+        try {
+            // Business logic
+            loggingUtils.logEvent(
+                log, 
+                LoggingUtils.LogLevel.INFO, 
+                "user_registered", 
+                "User registration successful", 
+                context);
+        } catch (Exception e) {
+            loggingUtils.logError(
+                log,
+                "registration_error",
+                "User registration failed",
+                e,
+                context);
+            throw e;
+        }
+    }
+}
+```
+
+## Sample JSON Log Output
+
+```json
+{
+  "@timestamp": "2025-04-26T05:50:44.405+0000",
+  "@version": "1",
+  "message": "HTTP GET /api/v1/health - 200 (79ms)",
+  "logger_name": "com.thrivemarket.logging.config.RequestLoggingInterceptor",
+  "thread_name": "http-nio-8080-exec-1",
+  "level": "INFO",
+  "level_value": 20000,
+  "path": "/api/v1/health",
+  "method": "GET",
+  "requestId": "unknown",
+  "clientIp": "0:0:0:0:0:0:0:1",
+  "sessionId": "none",
+  "durationMs": "79",
+  "status": "200",
+  "service": {
+    "name": "my-service",
+    "version": "0.0.1"
+  }
+}
+```
+
+## Migrating From Embedded Code
+
+To migrate from the embedded code in your service to this library:
+
+1. Remove the following classes from your codebase:
+   - `LoggingUtils.java`
+   - `RequestLoggingInterceptor.java` 
+   - `WebConfig.java` (if only used for logging configuration)
+
+2. Update your imports to use the library packages:
+   ```java
+   // Old
+   import com.yourcompany.yourservice.config.LoggingUtils;
+   
+   // New
+   import com.thrivemarket.logging.config.LoggingUtils;
+   ```
+
+3. Update your `application.yml` to use the new configuration properties:
+   ```yaml
+   thrivemarket:
+     logging:
+       request:
+         enabled: true
+   ```
+
+4. Update your `logback-spring.xml` to include the template from the library.
+
+## Contributing
+
+We welcome contributions to improve this logging library. Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Commit your changes with descriptive messages
+4. Push to your branch (`git push origin feature/your-feature`)
+5. Open a Pull Request
+
+### Development
+
+Build the project:
+```bash
+mvn clean install
+```
+
+Run tests:
+```bash
+mvn test
+```
+
+## License
+
+Copyright © 2025 Thrive Market, Inc. All rights reserved.
