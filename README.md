@@ -1,6 +1,17 @@
 # Thrive Market Java Logging Library
 
-A standardized structured logging library for Java applications that provides consistent, JSON-formatted logs suitable for modern observability platforms.
+A standardized logging configuration and utility library for Java applications that provides consistent, JSON-formatted logs suitable for modern observability platforms. This library wraps and configures SLF4J/Logback to provide structured logging capabilities.
+
+## Important Clarification
+
+**This library is not a replacement for SLF4J's Logger class.** Instead, it provides:
+
+1. Pre-configured JSON logging via Logback
+2. Spring Boot auto-configuration for logging
+3. Request logging interceptors for web applications
+4. Utility classes for enriched structured logging
+
+You should continue to use `org.slf4j.Logger` and `LoggerFactory` as your logging interface, while this library provides the configuration layer and additional utilities.
 
 ## Features
 
@@ -86,16 +97,21 @@ Create a `logback-spring.xml` file in your resources directory and include the p
 
 ### Using LoggingUtils
 
+The example below demonstrates how to use the SLF4J Logger interface alongside the LoggingUtils class from this library:
+
 ```java
 import com.thrivemarket.logging.config.LoggingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;                     // Standard SLF4J import - still required
+import org.slf4j.LoggerFactory;              // Standard SLF4J import - still required 
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
 public class UserService {
+    // Standard SLF4J Logger usage - no changes needed here
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
+    
+    // This library's utility class
     private final LoggingUtils loggingUtils;
     
     @Autowired
@@ -110,12 +126,17 @@ public class UserService {
         
         try {
             // Business logic
+            
+            // Using this library's utility for structured logging
             loggingUtils.logEvent(
-                log, 
+                log,                         // Pass your SLF4J logger here
                 LoggingUtils.LogLevel.INFO, 
                 "user_registered", 
                 "User registration successful", 
                 context);
+                
+            // You can also use standard SLF4J logging methods directly
+            log.info("User registered: {}", user.getId());
         } catch (Exception e) {
             loggingUtils.logError(
                 log,
@@ -163,7 +184,16 @@ To migrate from the embedded code in your service to this library:
    - `RequestLoggingInterceptor.java` 
    - `WebConfig.java` (if only used for logging configuration)
 
-2. Update your imports to use the library packages:
+2. Keep using SLF4J Logger interface:
+   ```java
+   // This is still correct - DO NOT change this!
+   import org.slf4j.Logger;
+   import org.slf4j.LoggerFactory;
+   
+   private static final Logger log = LoggerFactory.getLogger(YourClass.class);
+   ```
+
+3. Update utility class imports to use the library packages:
    ```java
    // Old
    import com.yourcompany.yourservice.config.LoggingUtils;
@@ -172,7 +202,9 @@ To migrate from the embedded code in your service to this library:
    import com.thrivemarket.logging.config.LoggingUtils;
    ```
 
-3. Update your `application.yml` to use the new configuration properties:
+   **Important:** Do NOT attempt to import `com.thrivemarket.logging.Logger` as this class does not exist.
+
+4. Update your `application.yml` to use the new configuration properties:
    ```yaml
    thrivemarket:
      logging:
@@ -180,7 +212,7 @@ To migrate from the embedded code in your service to this library:
          enabled: true
    ```
 
-4. Update your `logback-spring.xml` to include the template from the library.
+5. Update your `logback-spring.xml` to include the template from the library.
 
 ## Contributing
 

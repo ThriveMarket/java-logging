@@ -2,6 +2,14 @@
 
 This document outlines the steps to migrate an existing service from using embedded logging code to using the standardized `java-logging` library.
 
+## Important Note on Library Purpose
+
+The `java-logging` library does **not** provide a replacement for SLF4J's Logger class. It provides configuration, utilities, and interceptors to enhance your logging while you continue to use SLF4J's Logger interface.
+
+**Common misconception:** Trying to import `com.thrivemarket.logging.Logger` - this class does not exist in the library.
+
+**Correct approach:** Continue using `org.slf4j.Logger` and `LoggerFactory` while leveraging the configuration and utilities from this library.
+
 ## Step 1: Update Dependencies
 
 ### Maven
