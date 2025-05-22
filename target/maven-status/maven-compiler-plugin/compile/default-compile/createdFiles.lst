@@ -1,6 +1,0 @@
-com/thrivemarket/logging/config/LoggingAutoConfiguration.class
-com/thrivemarket/logging/example/LoggingExample.class
-com/thrivemarket/logging/config/RequestLoggingInterceptor.class
-com/thrivemarket/logging/config/LoggingUtils.class
-com/thrivemarket/logging/config/LoggingUtils$LogLevel.class
-com/thrivemarket/logging/config/LoggingWebMvcConfigurer.class
