@@ -32,7 +32,7 @@
             <timestampPattern>yyyy-MM-dd'T'HH:mm:ss.SSSZZ</timestampPattern>
             
             <!-- Default service name from Spring application properties -->
-            <customFields>{\"service\":{\"name\":\"${spring.application.name:-unknown}\",\"version\":\"${spring.application.version:-0.0.1}\"}}</customFields>
+            <customFields>{"service":{"name":"${spring.application.name:-unknown}","version":"${spring.application.version:-0.0.1}"}}</customFields>
             
             <!-- Include all other MDC values -->
             <includeMdcKeyName>*</includeMdcKeyName>
