@@ -1,0 +1,18 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: java-logging
+  description: A standardized logging configuration and utility library for Java applications that provides consistent, JSON-formatted logs suitable for modern observability platforms.
+  annotations:
+    github.com/project-slug: ThriveMarket/java-logging
+  tags:
+    - java
+    - logging
+    - slf4j
+    - logback
+    - json
+spec:
+  type: library
+  lifecycle: production
+  owner: group:default/engineering
+  system: logging
