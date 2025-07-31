@@ -14,5 +14,5 @@ metadata:
 spec:
   type: library
   lifecycle: production
-  owner: group:default/engineering
+  owner: group:okta/backend-core
   system: logging
