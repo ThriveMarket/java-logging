@@ -18,7 +18,7 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        role-to-assume: ${{ secrets.CODEARTIFACT_PUBLISHER_ROLE_ARN }}
+        role-to-assume: arn:aws:iam::904233098208:role/github-codeartifact-publisher
         aws-region: us-east-1
         role-session-name: github-actions-java-logging
 
