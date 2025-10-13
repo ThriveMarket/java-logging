@@ -139,9 +139,9 @@
     
     <distributionManagement>
         <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/thrivemarket/java-logging</url>
+            <id>codeartifact</id>
+            <name>AWS CodeArtifact</name>
+            <url>https://thrivemarket-904233098208.d.codeartifact.us-east-1.amazonaws.com/maven/libraries/</url>
         </repository>
     </distributionManagement>
     

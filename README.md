@@ -37,17 +37,17 @@ Add the following dependency to your `pom.xml`:
 </dependency>
 ```
 
-### GitHub Packages Configuration
+### AWS CodeArtifact Configuration
 
-To use this library from GitHub Packages, add the following to your `~/.m2/settings.xml`:
+To use this library from AWS CodeArtifact, add the following to your `~/.m2/settings.xml`:
 
 ```xml
 <settings>
   <servers>
     <server>
-      <id>github</id>
-      <username>${github.user}</username>
-      <password>${github.token}</password>
+      <id>codeartifact</id>
+      <username>aws</username>
+      <password>${env.CODEARTIFACT_AUTH_TOKEN}</password>
     </server>
   </servers>
 </settings>
@@ -58,11 +58,19 @@ And add the repository to your `pom.xml`:
 ```xml
 <repositories>
     <repository>
-        <id>github</id>
-        <url>https://maven.pkg.github.com/thrivemarket/java-logging</url>
+        <id>codeartifact</id>
+        <url>https://thrivemarket-904233098208.d.codeartifact.us-east-1.amazonaws.com/maven/libraries/</url>
     </repository>
 </repositories>
 ```
+
+Before building or deploying, export the CodeArtifact authorization token:
+
+```bash
+export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain thrivemarket --domain-owner 904233098208 --region us-east-1 --query authorizationToken --output text`
+```
+
+Note: The token expires in 12 hours.
 
 ## Usage
 
@@ -234,6 +242,20 @@ mvn clean install
 Run tests:
 ```bash
 mvn test
+```
+
+### Publishing to AWS CodeArtifact
+
+To publish a new version to AWS CodeArtifact:
+
+1. Export the CodeArtifact authorization token:
+```bash
+export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain thrivemarket --domain-owner 904233098208 --region us-east-1 --query authorizationToken --output text`
+```
+
+2. Deploy to CodeArtifact:
+```bash
+mvn deploy
 ```
 
 ## License
