@@ -11,6 +11,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    secrets: inherit
 
     steps:
     - uses: actions/checkout@v3
@@ -20,6 +21,7 @@ jobs:
       with:
         role-to-assume: ${{ secrets.CODEARTIFACT_PUBLISHER_ROLE_ARN }}
         aws-region: us-east-1
+        role-session-name: github-actions-java-logging
 
     - name: Get CodeArtifact token
       run: |
