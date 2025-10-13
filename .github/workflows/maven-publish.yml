@@ -18,8 +18,9 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        role-to-assume: ${{ secrets.CODEARTIFACT_PUBLISHER_ROLE_ARN }}
+        role-to-assume: arn:aws:iam::904233098208:role/github-codeartifact-publisher
         aws-region: us-east-1
+        role-session-name: github-actions-java-logging
 
     - name: Get CodeArtifact token
       run: |
@@ -36,6 +37,4 @@ jobs:
       run: mvn -B package
 
     - name: Publish to AWS CodeArtifact
-      run: mvn deploy
-      env:
-        CODEARTIFACT_AUTH_TOKEN: ${{ env.CODEARTIFACT_AUTH_TOKEN }}
+      run: mvn deploy -s settings.xml
