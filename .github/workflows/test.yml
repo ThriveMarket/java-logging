@@ -9,6 +9,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
     - uses: actions/checkout@v3
@@ -22,10 +25,9 @@ jobs:
     - name: Run tests with coverage
       run: mvn -B test
 
-    - name: Install Qlty CLI
-      run: curl https://qlty.sh | sh
-
     - name: Upload coverage to Qlty
-      env:
-        QLTY_COVERAGE_TOKEN: ${{ secrets.QLTY_COVERAGE_TOKEN }}
-      run: ~/.qlty/bin/qlty coverage publish target/site/jacoco/jacoco.xml --add-prefix src/main/java/
+      uses: qltysh/qlty-action/coverage@v2
+      with:
+        oidc: true
+        files: target/site/jacoco/jacoco.xml
+        add-prefix: src/main/java/
