@@ -28,4 +28,4 @@ jobs:
     - name: Upload coverage to Qlty
       env:
         QLTY_COVERAGE_TOKEN: ${{ secrets.QLTY_COVERAGE_TOKEN }}
-      run: ~/.qlty/bin/qlty coverage publish target/site/jacoco/jacoco.xml
+      run: ~/.qlty/bin/qlty coverage publish target/site/jacoco/jacoco.xml --add-prefix src/main/java/
