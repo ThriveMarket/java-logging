@@ -1,0 +1,31 @@
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Run tests with coverage
+      run: mvn -B test
+
+    - name: Install Qlty CLI
+      run: curl https://qlty.sh | sh
+
+    - name: Upload coverage to Qlty
+      env:
+        QLTY_COVERAGE_TOKEN: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+      run: qlty coverage publish target/site/jacoco/jacoco.xml
